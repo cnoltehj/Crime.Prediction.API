@@ -41,7 +41,7 @@ def read_policestation_data(provincecode : str ):
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     return fetch_poilcestation_data.to_dict(orient='records')
 
-@app.get("/fetch_stats_province_policestation/")
+@app.get("/fetch_stats_province_policestation/",deprecated=True)
 def read_stats_province_policestation(provincecode: str, policestationcode: str):
 
     # Call function from ExtractDBData.py to fetch data based on parameters
@@ -54,7 +54,7 @@ def read_stats_province_policestation(provincecode: str, policestationcode: str)
     print('Final Dataset : ')
     return fetch_crime_data.to_dict(orient='records')
 
-@app.get("/fetch_stats_province_policestation_quarterly/")
+@app.get("/fetch_stats_province_policestation_quarterly/",deprecated=True)
 def read_stats_province_policestation_quarterly(provincecode: str, policestationcode: str, quarter: Optional[int] = None):
 
     # Call function from ExtractDBData.py to fetch data based on parameters
@@ -95,43 +95,44 @@ def read_predition_province_policestation_year_quarterly():
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     return fetch_prediction_province_policestation.to_dict(orient='records')
 
-@app.post("/fetch_best_predictions_province_policestation_year_quarterly/")
+
+@app.post("/fetch_best_predictions_province_policestation_year_quarterly/", deprecated=True)
 def read_best_predictions_province_policestation_year_quarterly(provincecode : str ):
    
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     return 0
 
-@app.post("/add_prediction_knn_province_policestation_year_quarterly/")
+@app.post("/add_prediction_knn_province_policestation_year_quarterly/", deprecated=True)
 def create_prediction_knn_province_policestation_year_quarterly(provincecode : str ):
    
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     return 0
 
-@app.post("/add_prediction_mlpregressor_province_policestation_year_quarterly/")
+@app.post("/add_prediction_mlpregressor_province_policestation_year_quarterly/", deprecated=True)
 def create_prediction_mlpregressor_province_policestation_year_quarterly(provincecode : str ):
    
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     return 0
 
-@app.post("/add_prediction_svr_province_policestation_year_quarterly/")
+@app.post("/add_prediction_svr_province_policestation_year_quarterly/", deprecated=True)
 def create_prediction_svr_province_policestation_year_quarterly(provincecode : str ):
    
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     return 0
 
-@app.post("/add_prediction_rfm_province_policestation_year_quarterly/")
+@app.post("/add_prediction_rfm_province_policestation_year_quarterly/",deprecated=True)
 def create_prediction_rfm_province_policestation_year_quarterly(provincecode : str ):
    
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     return 0
 
-@app.post("/add_prediction_xgboost_province_policestation_year_quarterly/")
+@app.post("/add_prediction_xgboost_province_policestation_year_quarterly/",deprecated=True)
 def create_prediction_xgboost_province_policestation_year_quarterly(provincecode : str ):
    
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     return 0
 
-@app.post("/update_best_predictions/")
+@app.post("/update_best_predictions/" ,deprecated=True)
 def update_best_prediction(provincecode : str ):
    # will set a flag for the best 2 priction AcceptPredict: 1 = true , 0 = false
     # Convert DataFrame to JSON serializable format (list of dictionaries)
