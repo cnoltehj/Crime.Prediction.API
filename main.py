@@ -3,7 +3,7 @@ from typing import Optional
 import pandas as pd
 from DatabaseContext import ExtractDBData
 
-app = FastAPI()
+app = FastAPI(redoc_url=None)
 
 
 @app.get("/fetch_prediction_province_policestation/")
@@ -41,6 +41,37 @@ def read_policestation_data(provincecode : str ):
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     return fetch_poilcestation_data.to_dict(orient='records')
 
+@app.get("/fetch_stats_province_year_quarterly/")
+def read_stats_province_quarterly(provincecode : str ):
+   
+    print(provincecode)
+    
+    # Call function from ExtractDBData.py to fetch data based on parameters
+    fetch_crime_data = ExtractDBData.read_stats_province_quarterly(provincecode)
+
+    if fetch_crime_data is None:
+        return {"error": "Crime data not found"}
+    
+    # Convert DataFrame to JSON serializable format (list of dictionaries)
+    return fetch_crime_data.to_dict(orient='records')
+
+
+@app.post("/fetch_predition_province_policestation_year_quarterly/")
+def read_predition_province_policestation_year_quarterly():
+   
+       # Call function from ExtractDBData.py to fetch data based on parameters
+    
+    fetch_prediction_province_policestation = ExtractDBData.fetch_prediction_province_policestation_data()
+
+    if fetch_prediction_province_policestation is None:
+        return {"error": "Province data not found"}
+    
+    # Convert DataFrame to JSON serializable format (list of dictionaries)
+    return fetch_prediction_province_policestation.to_dict(orient='records')
+
+
+# ============================  -- DEPRECATED END-CALLS --  =====================================
+
 @app.get("/fetch_stats_province_policestation/",deprecated=True)
 def read_stats_province_policestation(provincecode: str, policestationcode: str):
 
@@ -65,35 +96,6 @@ def read_stats_province_policestation_quarterly(provincecode: str, policestation
     
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     return fetch_crime_data.to_dict(orient='records')
-
-@app.get("/fetch_stats_province_year_quarterly/")
-def read_stats_province_quarterly(provincecode : str, quarter: Optional[int] = None ):
-   
-    print(provincecode)
-    print(quarter)
-    
-    # Call function from ExtractDBData.py to fetch data based on parameters
-    fetch_crime_data = ExtractDBData.read_stats_province_quarterly(provincecode, quarter)
-
-    if fetch_crime_data is None:
-        return {"error": "Crime data not found"}
-    
-    # Convert DataFrame to JSON serializable format (list of dictionaries)
-    return fetch_crime_data.to_dict(orient='records')
-
-
-@app.post("/fetch_predition_province_policestation_year_quarterly/")
-def read_predition_province_policestation_year_quarterly():
-   
-       # Call function from ExtractDBData.py to fetch data based on parameters
-    
-    fetch_prediction_province_policestation = ExtractDBData.fetch_prediction_province_policestation_data()
-
-    if fetch_prediction_province_policestation is None:
-        return {"error": "Province data not found"}
-    
-    # Convert DataFrame to JSON serializable format (list of dictionaries)
-    return fetch_prediction_province_policestation.to_dict(orient='records')
 
 
 @app.post("/fetch_best_predictions_province_policestation_year_quarterly/", deprecated=True)

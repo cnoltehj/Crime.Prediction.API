@@ -212,16 +212,15 @@ def read_stats_province_policestation_quarterly(provincecode, policestationcode,
         cursor.close()
         cnxn.close()
 
-def read_stats_province_quarterly(provincecode, quarter=None):
+def read_stats_province_quarterly(provincecode):
     # Connect to the database
     cnxn = connect_to_database()
     cursor = cnxn.cursor()
 
     try:
         print("Province: " ,provincecode)
-        print("Quarter : " ,quarter)
 
-        cursor.execute("EXEC sp_Get_Stats_Province_Quarterly ?, ?", (provincecode.strip(), int(quarter)))
+        cursor.execute("EXEC sp_Get_Stats_Province_Quarterly ?", (provincecode.strip()))
 
         # Fetch the results after executing the stored procedure
         rows = cursor.fetchall()
