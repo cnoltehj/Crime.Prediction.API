@@ -98,14 +98,15 @@ def fetch_policestation_per_provinces(provincecode):
         cursor.close()
         cnxn.close()    
 
-def fetch_prediction_province_policestation():
+def fetch_province_policestation_year_quarterly_algorithm(provincecode: str, policestationcode: str, quarter: str,  algorithm: str):
     # Connect to the database
     cnxn = connect_to_database()
     cursor = cnxn.cursor()
-
+    
     try:   
-        cursor.execute("EXEC sp_Get_Prediction_Province_PoliceStation")
+        # cursor.execute("EXEC sp_Get_Prediction_Province_PoliceStation_Quarter_Algorithm ?, ?, ?, ?", (provincecode.strip(), policestationcode.strip(), int(quarter), algorithm.strip))
 
+        cursor.execute("EXEC sp_Get_Prediction_Province_PoliceStation_Quarter_Algorithm ? , ?, ?, ?", (provincecode.strip(), policestationcode.strip(), int(quarter), algorithm.strip()))
         # Fetch the results after executing the stored procedure
         rows = cursor.fetchall()
         print(rows)

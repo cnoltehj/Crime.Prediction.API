@@ -5,7 +5,6 @@ from DatabaseContext import ExtractDBData
 
 app = FastAPI(redoc_url=None)
 
-
 @app.get("/fetch_prediction_province_policestation/")
 def read_provinces01_data():
 
@@ -55,20 +54,16 @@ def read_stats_province_quarterly(provincecode : str ):
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     return fetch_crime_data.to_dict(orient='records')
 
-
-@app.post("/fetch_predition_province_policestation_year_quarterly/")
-def read_predition_province_policestation_year_quarterly():
+@app.get("/fetch_predition_province_policestation_quarterly_algorithm/")
+def read_predition_province_policestation_year_quarterly_algorithm(provincecode: str, policestationcode: str, quarter: str,  algorithm: str):
    
-       # Call function from ExtractDBData.py to fetch data based on parameters
-    
-    fetch_prediction_province_policestation = ExtractDBData.fetch_prediction_province_policestation_data()
+    province_policestation_year_quarterly_algorithm = ExtractDBData.fetch_province_policestation_year_quarterly_algorithm(provincecode,policestationcode,quarter,algorithm)
 
-    if fetch_prediction_province_policestation is None:
-        return {"error": "Province data not found"}
+    if province_policestation_year_quarterly_algorithm is None:
+        return {"error": "Prediction not found"}
     
     # Convert DataFrame to JSON serializable format (list of dictionaries)
-    return fetch_prediction_province_policestation.to_dict(orient='records')
-
+    return province_policestation_year_quarterly_algorithm.to_dict(orient='records')
 
 # ============================  -- DEPRECATED END-CALLS --  =====================================
 
@@ -96,7 +91,6 @@ def read_stats_province_policestation_quarterly(provincecode: str, policestation
     
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     return fetch_crime_data.to_dict(orient='records')
-
 
 @app.post("/fetch_best_predictions_province_policestation_year_quarterly/", deprecated=True)
 def read_best_predictions_province_policestation_year_quarterly(provincecode : str ):
