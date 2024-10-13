@@ -1,7 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from typing import Optional
 import pandas as pd
-from DatabaseContext import ExtractDBData
+from DatabaseContext import ExtractDBData, CreateDBData, DataModel
+import json
+from pydantic import BaseModel
 
 app = FastAPI(redoc_url=None)
 
@@ -65,6 +67,30 @@ def read_predition_province_policestation_year_quarterly_algorithm(provincecode:
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     return province_policestation_year_quarterly_algorithm.to_dict(orient='records')
 
+# Define the FastAPI endpoint to add predictions
+@app.post("/add_predictions/")
+async def create_predictions(data: DataModel.PredictionData):
+    # Call the insert_prediction_to_db function to handle the database insertion
+    return CreateDBData.insert_prediction_to_db(data)
+
+# Define the FastAPI endpoint to add metrics
+@app.post("/add_metricss/")
+async def create_metricss(data: DataModel.MerticData):
+    # Call the insert_prediction_to_db function to handle the database insertion
+    return CreateDBData.insert_metrics_to_db(data)
+
+@app.get("/fetch_stats_province_policestation_quarterly/")
+def read_stats_province_policestation_quarterly(provincecode: str, policestationcode: str, quarter: Optional[int] = None):
+
+    # Call function from ExtractDBData.py to fetch data based on parameters
+    fetch_crime_data = ExtractDBData.read_stats_province_policestation_quarterly(provincecode, policestationcode, quarter)
+
+    if fetch_crime_data is None:
+        return {"error": "Crime data not found"}
+    
+    # Convert DataFrame to JSON serializable format (list of dictionaries)
+    return fetch_crime_data.to_dict(orient='records')
+
 # ============================  -- DEPRECATED END-CALLS --  =====================================
 
 @app.get("/fetch_stats_province_policestation/",deprecated=True)
@@ -78,18 +104,6 @@ def read_stats_province_policestation(provincecode: str, policestationcode: str)
     
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     print('Final Dataset : ')
-    return fetch_crime_data.to_dict(orient='records')
-
-@app.get("/fetch_stats_province_policestation_quarterly/",deprecated=True)
-def read_stats_province_policestation_quarterly(provincecode: str, policestationcode: str, quarter: Optional[int] = None):
-
-    # Call function from ExtractDBData.py to fetch data based on parameters
-    fetch_crime_data = ExtractDBData.read_stats_province_policestation_quarterly(provincecode, policestationcode, quarter)
-
-    if fetch_crime_data is None:
-        return {"error": "Crime data not found"}
-    
-    # Convert DataFrame to JSON serializable format (list of dictionaries)
     return fetch_crime_data.to_dict(orient='records')
 
 @app.post("/fetch_best_predictions_province_policestation_year_quarterly/", deprecated=True)
