@@ -67,6 +67,17 @@ def read_predition_province_policestation_year_quarterly_algorithm(provincecode:
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     return province_policestation_year_quarterly_algorithm.to_dict(orient='records')
 
+@app.get("/fetch_training_predition_province_policestation_quarterly_algorithm/")
+def read_training_predition_province_policestation_year_quarterly_algorithm(provincecode: str, policestationcode: str, quarter: str,  algorithm: str):
+   
+    province_policestation_year_quarterly_algorithm = ExtractDBData.fetch_training_province_policestation_year_quarterly_algorithm(provincecode,policestationcode,quarter,algorithm)
+
+    if province_policestation_year_quarterly_algorithm is None:
+        return {"error": "Prediction not found"}
+    
+    # Convert DataFrame to JSON serializable format (list of dictionaries)
+    return province_policestation_year_quarterly_algorithm.to_dict(orient='records')
+
 # Define the FastAPI endpoint to add predictions
 @app.post("/add_predictions/")
 async def create_predictions(data: DataModel.PredictionData):
