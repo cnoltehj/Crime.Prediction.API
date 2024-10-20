@@ -135,7 +135,6 @@ def fetch_province_policestation_year_quarterly_algorithm(provincecode: str, pol
         cursor.close()
         cnxn.close()
 
-
 def fetch_training_province_policestation_year_quarterly_algorithm(provincecode: str, policestationcode: str, quarter: str,  algorithm: str):
     # Connect to the database
     cnxn = connect_to_database()
@@ -145,6 +144,184 @@ def fetch_training_province_policestation_year_quarterly_algorithm(provincecode:
         # cursor.execute("EXEC sp_Get_Prediction_Province_PoliceStation_Quarter_Algorithm ?, ?, ?, ?", (provincecode.strip(), policestationcode.strip(), int(quarter), algorithm.strip))
 
         cursor.execute("EXEC sp_Get_Training_Prediction_Province_PoliceStation_Quarter_Algorithm ? , ?, ?, ?", (provincecode.strip(), policestationcode.strip(), int(quarter), algorithm.strip()))
+        # Fetch the results after executing the stored procedure
+        rows = cursor.fetchall()
+        print(rows)
+
+        # Fetch the column descriptions (headings)
+        headings = [column[0] for column in cursor.description]
+
+        # Reshape the rows data to match the expected shape
+        rows = [list(row) for row in rows]
+
+        # Create a DataFrame from the fetched rows and headings
+        df = pd.DataFrame(rows, columns=headings)
+
+        # Replace null values with 0's
+        df.fillna(0, inplace=True)
+
+        return df  # Return the DataFrame
+
+    except pyodbc.Error as e:
+        # Print an error message if there's an exception
+        print("Error executing SQL query:", e)
+        return None  # Return None if there's an error
+
+    finally:
+        # Close the cursor and connection
+        cursor.close()
+        cnxn.close()
+
+## New additions
+def fetch_training_metrics():
+    # Connect to the database
+    cnxn = connect_to_database()
+    cursor = cnxn.cursor()
+    
+    try:   
+        cursor.execute("EXEC sp_Get_All_Metrics")
+        # Fetch the results after executing the stored procedure
+        rows = cursor.fetchall()
+        print(rows)
+
+        # Fetch the column descriptions (headings)
+        headings = [column[0] for column in cursor.description]
+
+        # Reshape the rows data to match the expected shape
+        rows = [list(row) for row in rows]
+
+        # Create a DataFrame from the fetched rows and headings
+        df = pd.DataFrame(rows, columns=headings)
+
+        # Replace null values with 0's
+        df.fillna(0, inplace=True)
+
+        return df  # Return the DataFrame
+
+    except pyodbc.Error as e:
+        # Print an error message if there's an exception
+        print("Error executing SQL query:", e)
+        return None  # Return None if there's an error
+
+    finally:
+        # Close the cursor and connection
+        cursor.close()
+        cnxn.close()
+
+def fetch_train_predictions():
+    # Connect to the database
+    cnxn = connect_to_database()
+    cursor = cnxn.cursor()
+    
+    try:  
+        cursor.execute("EXEC sp_Get_All_Train_Prediction")
+        # Fetch the results after executing the stored procedure
+        rows = cursor.fetchall()
+        print(rows)
+
+        # Fetch the column descriptions (headings)
+        headings = [column[0] for column in cursor.description]
+
+        # Reshape the rows data to match the expected shape
+        rows = [list(row) for row in rows]
+
+        # Create a DataFrame from the fetched rows and headings
+        df = pd.DataFrame(rows, columns=headings)
+
+        # Replace null values with 0's
+        df.fillna(0, inplace=True)
+
+        return df  # Return the DataFrame
+
+    except pyodbc.Error as e:
+        # Print an error message if there's an exception
+        print("Error executing SQL query:", e)
+        return None  # Return None if there's an error
+
+    finally:
+        # Close the cursor and connection
+        cursor.close()
+        cnxn.close()
+
+def fetch_all_predition_after_model_training():
+    # Connect to the database
+    cnxn = connect_to_database()
+    cursor = cnxn.cursor()
+    
+    try:  
+        cursor.execute("EXEC sp_Get_All_Train_Prediction_After_Model_Training")
+        # Fetch the results after executing the stored procedure
+        rows = cursor.fetchall()
+        print(rows)
+
+        # Fetch the column descriptions (headings)
+        headings = [column[0] for column in cursor.description]
+
+        # Reshape the rows data to match the expected shape
+        rows = [list(row) for row in rows]
+
+        # Create a DataFrame from the fetched rows and headings
+        df = pd.DataFrame(rows, columns=headings)
+
+        # Replace null values with 0's
+        df.fillna(0, inplace=True)
+
+        return df  # Return the DataFrame
+
+    except pyodbc.Error as e:
+        # Print an error message if there's an exception
+        print("Error executing SQL query:", e)
+        return None  # Return None if there's an error
+
+    finally:
+        # Close the cursor and connection
+        cursor.close()
+        cnxn.close()
+
+def fetch_all_trained_predition():
+    # Connect to the database
+    cnxn = connect_to_database()
+    cursor = cnxn.cursor()
+    
+    try:  
+        cursor.execute("EXEC sp_Get_All_Prediction")
+        # Fetch the results after executing the stored procedure
+        rows = cursor.fetchall()
+        print(rows)
+
+        # Fetch the column descriptions (headings)
+        headings = [column[0] for column in cursor.description]
+
+        # Reshape the rows data to match the expected shape
+        rows = [list(row) for row in rows]
+
+        # Create a DataFrame from the fetched rows and headings
+        df = pd.DataFrame(rows, columns=headings)
+
+        # Replace null values with 0's
+        df.fillna(0, inplace=True)
+
+        return df  # Return the DataFrame
+
+    except pyodbc.Error as e:
+        # Print an error message if there's an exception
+        print("Error executing SQL query:", e)
+        return None  # Return None if there's an error
+
+    finally:
+        # Close the cursor and connection
+        cursor.close()
+        cnxn.close()
+
+def fetch_initial_province_policestation_year_quarterly(provincecode: str, policestationcode: str, quarter: str):
+    # Connect to the database
+    cnxn = connect_to_database()
+    cursor = cnxn.cursor()
+    
+    try:   
+        # cursor.execute("EXEC sp_Get_Prediction_Province_PoliceStation_Quarter_Algorithm ?, ?, ?, ?", (provincecode.strip(), policestationcode.strip(), int(quarter), algorithm.strip))
+
+        cursor.execute("EXEC sp_Get_Initial_Prediction_Province_PoliceStation_Quarter? , ?, ?, ?", (provincecode.strip(), policestationcode.strip(), int(quarter)))
         # Fetch the results after executing the stored procedure
         rows = cursor.fetchall()
         print(rows)

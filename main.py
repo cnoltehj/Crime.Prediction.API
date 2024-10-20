@@ -56,6 +56,7 @@ def read_stats_province_quarterly(provincecode : str ):
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     return fetch_crime_data.to_dict(orient='records')
 
+## New end points
 @app.get("/fetch_predition_province_policestation_quarterly_algorithm/")
 def read_predition_province_policestation_year_quarterly_algorithm(provincecode: str, policestationcode: str, quarter: str,  algorithm: str):
    
@@ -67,7 +68,7 @@ def read_predition_province_policestation_year_quarterly_algorithm(provincecode:
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     return province_policestation_year_quarterly_algorithm.to_dict(orient='records')
 
-@app.get("/fetch_training_predition_province_policestation_quarterly_algorithm/")
+@app.get("/fetch_training_predition_per_police_station/")
 def read_training_predition_province_policestation_year_quarterly_algorithm(provincecode: str, policestationcode: str, quarter: str,  algorithm: str):
    
     province_policestation_year_quarterly_algorithm = ExtractDBData.fetch_training_province_policestation_year_quarterly_algorithm(provincecode,policestationcode,quarter,algorithm)
@@ -78,17 +79,29 @@ def read_training_predition_province_policestation_year_quarterly_algorithm(prov
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     return province_policestation_year_quarterly_algorithm.to_dict(orient='records')
 
-# Define the FastAPI endpoint to add predictions
-@app.post("/add_predictions/")
-async def create_predictions(data: DataModel.PredictionData):
-    # Call the insert_prediction_to_db function to handle the database insertion
-    return CreateDBData.insert_prediction_to_db(data)
 
-# Define the FastAPI endpoint to add metrics
-@app.post("/add_metricss/")
-async def create_metricss(data: DataModel.MerticData):
-    # Call the insert_prediction_to_db function to handle the database insertion
-    return CreateDBData.insert_metrics_to_db(data)
+@app.get("/fetch_all_trained_predition/")
+def read_all_trained_predition():
+   
+    all_predition_after_model_training = ExtractDBData.fetch_all_trained_predition()
+
+    if all_predition_after_model_training is None:
+        return {"error": "Prediction not found"}
+    
+    # Convert DataFrame to JSON serializable format (list of dictionaries)
+    return all_predition_after_model_training.to_dict(orient='records')
+
+
+@app.get("/fetch_all_predition_after_model_training/")
+def read_all_predition_after_model_training():
+   
+    all_predition_after_model_training = ExtractDBData.fetch_all_predition_after_model_training()
+
+    if all_predition_after_model_training is None:
+        return {"error": "Prediction not found"}
+    
+    # Convert DataFrame to JSON serializable format (list of dictionaries)
+    return all_predition_after_model_training.to_dict(orient='records')
 
 @app.get("/fetch_stats_province_policestation_quarterly/")
 def read_stats_province_policestation_quarterly(provincecode: str, policestationcode: str, quarter: Optional[int] = None):
@@ -102,59 +115,35 @@ def read_stats_province_policestation_quarterly(provincecode: str, policestation
     # Convert DataFrame to JSON serializable format (list of dictionaries)
     return fetch_crime_data.to_dict(orient='records')
 
-# ============================  -- DEPRECATED END-CALLS --  =====================================
+#fetch_training_metrics(scenario: str)
+@app.get("/fetch_training_metrics/")
+def read_training_metrics():
 
-@app.get("/fetch_stats_province_policestation/",deprecated=True)
-def read_stats_province_policestation(provincecode: str, policestationcode: str):
+    fetch_training_metrics_data = ExtractDBData.fetch_training_metrics()
 
-    # Call function from ExtractDBData.py to fetch data based on parameters
-    fetch_crime_data = ExtractDBData.read_stats_province_policestation(provincecode, policestationcode)
-
-    if fetch_crime_data is None:
-        return {"error": "Crime data not found"}
+    if fetch_training_metrics_data is None:
+        return {"error": "Scenario data not found"}
     
     # Convert DataFrame to JSON serializable format (list of dictionaries)
-    print('Final Dataset : ')
-    return fetch_crime_data.to_dict(orient='records')
+    return fetch_training_metrics_data.to_dict(orient='records')
 
-@app.post("/fetch_best_predictions_province_policestation_year_quarterly/", deprecated=True)
-def read_best_predictions_province_policestation_year_quarterly(provincecode : str ):
-   
-    # Convert DataFrame to JSON serializable format (list of dictionaries)
-    return 0
+# Define the FastAPI endpoint to add metrics
+@app.post("/add_metricss/")
+async def create_metricss(data: DataModel.MerticData):
+    # Call the insert_prediction_to_db function to handle the database insertion
+    return CreateDBData.insert_metrics_to_db(data)
 
-@app.post("/add_prediction_knn_province_policestation_year_quarterly/", deprecated=True)
-def create_prediction_knn_province_policestation_year_quarterly(provincecode : str ):
-   
-    # Convert DataFrame to JSON serializable format (list of dictionaries)
-    return 0
 
-@app.post("/add_prediction_mlpregressor_province_policestation_year_quarterly/", deprecated=True)
-def create_prediction_mlpregressor_province_policestation_year_quarterly(provincecode : str ):
-   
-    # Convert DataFrame to JSON serializable format (list of dictionaries)
-    return 0
+# Define the FastAPI endpoint to add predictions
+@app.post("/add_all_predictions/")
+async def create_predictions(data: DataModel.PredictionData):
+    # Call the insert_prediction_to_db function to handle the database insertion
+    return CreateDBData.insert_all_prediction_to_db(data)
 
-@app.post("/add_prediction_svr_province_policestation_year_quarterly/", deprecated=True)
-def create_prediction_svr_province_policestation_year_quarterly(provincecode : str ):
-   
-    # Convert DataFrame to JSON serializable format (list of dictionaries)
-    return 0
+# Define the FastAPI endpoint to add predictions
+@app.post("/add_trianed_predictions/")
+async def create_trianed_predictions(data: DataModel.PredictionData):
+    # Call the insert_prediction_to_db function to handle the database insertion
+    return CreateDBData.insert_trianed_prediction_to_db(data)
 
-@app.post("/add_prediction_rfm_province_policestation_year_quarterly/",deprecated=True)
-def create_prediction_rfm_province_policestation_year_quarterly(provincecode : str ):
-   
-    # Convert DataFrame to JSON serializable format (list of dictionaries)
-    return 0
 
-@app.post("/add_prediction_xgboost_province_policestation_year_quarterly/",deprecated=True)
-def create_prediction_xgboost_province_policestation_year_quarterly(provincecode : str ):
-   
-    # Convert DataFrame to JSON serializable format (list of dictionaries)
-    return 0
-
-@app.post("/update_best_predictions/" ,deprecated=True)
-def update_best_prediction(provincecode : str ):
-   # will set a flag for the best 2 priction AcceptPredict: 1 = true , 0 = false
-    # Convert DataFrame to JSON serializable format (list of dictionaries)
-    return 0
