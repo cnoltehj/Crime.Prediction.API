@@ -5,7 +5,7 @@ from DatabaseContext import ExtractDBData, CreateDBData, DataModel
 import json
 from pydantic import BaseModel
 
-app = FastAPI(redoc_url=None)
+app = FastAPI(title="Hot-Spot Crime Prediction",version="1.0.0", description="This is a custom API for handling hot-spot crime predictions data operations.")
 
 tags_metadata = [
     {"name": "GENERIC CALLS", "description": "These End-points server across platforms and applications"},
@@ -19,7 +19,12 @@ tags_metadata = [
 @app.get("/fetch_all_provinces/", tags=["GENERIC CALLS"])
 def read_provinces_data():
 
+    print("Fetching all provinces data...")
     fetch_province_data = ExtractDBData.fetch_all_provinces()
+
+    print(fetch_province_data)
+
+    print("Data fetched successfully.")
 
     if fetch_province_data is None:
         return {"error": "Province data not found"}
@@ -41,35 +46,23 @@ def read_policestation_data(provincecode : str ):
     return fetch_poilcestation_data.to_dict(orient='records')
 
 
-@app.get("/fetch_all_stats_per_province_quarterly/",tags=["GENERIC CALLS"])
-def read_all_stats_per_province_quarterly(provincecode : str , quarter: Optional[int] = None):
- 
-    # Call function from ExtractDBData.py to fetch data based on parameters
-    fetch_crime_data = ExtractDBData.read_all_stats_per_province_quarterly(provincecode,quarter)
+@app.get("/fetch_all_stats_per_province_quarterly/", tags=["GENERIC CALLS"])
+def read_all_stats_per_province_quarterly(provincecode: str, quarter: Optional[int] = None):
+    try:
+        fetch_crime_data = ExtractDBData.read_all_stats_per_province_quarterly(provincecode, quarter)
 
-    if fetch_crime_data is None:
-        return {"error": "Crime data not found"}
-    
-    # Replace only NaN (null) values with None, do NOT touch actual 0 values
-    fetch_crime_data = fetch_crime_data.where(pd.notnull(fetch_crime_data), None)
+        if fetch_crime_data is None or fetch_crime_data.empty:
+            raise HTTPException(status_code=404, detail="Crime data not found")
 
-    print(fetch_crime_data)
-    
-    # Convert DataFrame to JSON serializable format (list of dictionaries)
-    return fetch_crime_data.to_dict(orient='records')
+        # Replace NaN with None for JSON response
+        fetch_crime_data = fetch_crime_data.where(pd.notnull(fetch_crime_data), None)
+        return fetch_crime_data.to_dict(orient='records')
 
-#endregion
-
-#region EXPERIMENT CALLS END-POINT-CALLS
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 
-#endregion
 
-#region PREDICTION END-POINT-CALLS
-
-#endregion
-
-#region WEB-UI END-POINT-CALLS
 
 #endregion
 

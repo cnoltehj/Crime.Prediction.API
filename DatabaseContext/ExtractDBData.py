@@ -24,7 +24,8 @@ def connect_to_database():
     password = config.DefaultConnection['password']
 
     # Establish database connection
-    cnxn = pyodbc.connect(f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={database};UID={username};PWD={password}')
+    cnxn = pyodbc.connect(f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={database};UID={username};PWD={password};TrustServerCertificate=yes')
+    #cnxn = pyodbc.connect(f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={database};TrustServerCertificate=yes;Encrypt=yes')
     return cnxn
 
 #region GENERIC DB-CALLS
@@ -99,42 +100,40 @@ def fetch_policestation_per_provinces(provincecode):
         cursor.close()
         cnxn.close()    
 
-def read_all_stats_per_province_quarterly(provincecode,quarter=None):
-    # Connect to the database
+def read_all_stats_per_province_quarterly(provincecode, quarter=None):
     cnxn = connect_to_database()
     cursor = cnxn.cursor()
 
     try:
+        print(f"ProvinceCode={provincecode}, Quarter={quarter}")
 
-        cursor.execute("EXEC sp_Generic_Get_All_Stats_Province_Quarterly ?, ?", (provincecode.strip(),int(quarter)))
+        if quarter is not None:
+            cursor.execute(
+                "EXEC sp_Generic_Get_All_Stats_Province_Quarterly ?, ?",
+                (provincecode.strip(), int(quarter))
+            )
+        else:
+            cursor.execute(
+                "EXEC sp_Generic_Get_All_Stats_Province_Quarterly ?, ?",
+                (provincecode.strip(), None)  # pass NULL if quarter not provided
+            )
 
-        # Fetch the results after executing the stored procedure
         rows = cursor.fetchall()
-
-        # Fetch the column descriptions (headings)
         headings = [column[0] for column in cursor.description]
-
-        # Reshape the rows data to match the expected shape
         rows = [list(row) for row in rows]
 
-        # Create a DataFrame from the fetched rows and headings
         df_stats = pd.DataFrame(rows, columns=headings)
-
-        # Replace null values with Nan
         df_stats.fillna('Nan', inplace=True)
-        #df_stats = df_stats.where(pd.notnull(df_stats), None)  # Replace NaN with None
 
-        return df_stats  # Return the DataFrame
+        return df_stats
 
-    except pyodbc.Error as e:
-        # Print an error message if there's an exception
-        print("Error executing SQL query:", e)
-        return None  # Return None if there's an error
-
+    except Exception as e:
+        print("SQL execution error:", e)
+        raise
     finally:
-        # Close the cursor and connection
         cursor.close()
         cnxn.close()
+
 
 
 #endregion

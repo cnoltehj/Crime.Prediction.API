@@ -1,8 +1,8 @@
 DefaultConnection = dict(
-server = 'DESKTOP-HTHQ40O\SQLEXPRESS',
+server = 'NOLTE01\CHARLESNOLTE',
 database = 'SouthAfrica_CrimeStats',
 username = 'cnoltehj',
-password = 'HeidiJoy@1_2024'
+password = 'HeidiJoy@1'
 )
 BaseURL = 'http://127.0.0.1:8080/items/'
 
